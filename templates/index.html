@@ -1,0 +1,2346 @@
+<html>
+    
+<head>
+    <!-- <meta http-equiv="refresh" content="60" />  -->
+ 
+    <style>
+      html,body{
+          height: 100%;
+      }
+        .column {
+        float: left;
+        width: 20%;
+        padding: 5px;
+        }
+        .columnone {   
+        padding-top: 10%;
+        }
+        #converts, #converts tr, #converts td, #converts th {
+        border: 1px solid rgb(0, 0, 0);  
+        padding: 5px;        
+        }
+        .teste_com {
+        border: 1px solid rgb(0, 0, 0);  
+        padding: 5px;
+        
+        }
+        .coin, .symbol
+        {
+        margin-bottom: 10px;;
+        background-color: turquoise;
+        }
+        select option[value="one"]{
+            background-color: red;
+        }
+        .col_all{
+           
+           height: auto;
+           width: 100%;
+           text-align: center;                     
+           }
+        .two_col_left{
+           
+            height: auto;
+            width: 50%;
+            text-align: center;                     
+            }
+        .two_col_rigth{
+           
+            height: auto;
+            width: 50%;
+            text-align: center;                     
+            }
+        .zoom_col{
+            zoom: 75%;
+            width: 50%;
+            }
+            .row {
+            display: flex;
+            margin-left:-5px;
+            margin-right:-5px;
+            }
+            .column {
+            flex: 50%;
+            padding: 5px;
+            }
+
+            table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: 100%;
+            border: 1px solid #ddd;
+            }
+            tr:nth-child(even) {
+            background-color: #f2f2f2;
+            }
+
+        </style>   
+                
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/hmac-sha256.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/enc-base64.min.js"></script>
+    <!-- <script src="nunjucks.js"></script> -->
+    <!-- <script src="/crypto-js.js"></script> -->
+    <!-- <script src="../main.js"></script> -->
+    <!-- <script src="moment.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+    <script src ="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+   
+</head>
+
+<body onload="sortByDateBuy();sortByDateSell();calcular();Reorder()">
+    
+ 
+    
+<h1 class="col_all">SUPERFLY</h1>
+
+
+    <table>               
+    <td>
+        <div id="chart"></div>
+        <br>
+        <div id="chart_USDT"></div>
+    </td>
+
+<td>  
+    <div style="border:solid gray 1px; padding:20px; width:300px; margin-top:20px;">
+        <h1>Parity Process</h1>
+        <table>
+               <!-- 
+        <tr><p>Balances disponiveis BNB USDT ETH BTC </p></tr>
+        <tr><p>Quantidade mínimo 15 dólares</p></tr>
+        <tr><p>Par de melhor compra inicial (Sell price)</p></tr>
+        <tr><p>Par de melhor venda inicial (Buy price)</p></tr>
+        <tr><p>Consolidação do processo em USDT</p></tr>
+    
+          | first
+          <br>
+<demostracao></demostracao>
+          <input type="number" id="parityquantity" name="parityquantity" placeholder="eg. > 11" onkeypress="ParityFunction()"/> 
+    
+    
+    -->
+
+
+        <tr>
+        <th>USDT</th>    
+        <th>BTC</th>
+        <th>ETH</th>
+        <th>BNB</th>
+
+        <div hidden id="tradesnow"></div>
+        <div hidden id="tradesnowBTC"></div>
+        <div hidden id="tradesnowETH"></div>
+        <div hidden id="tradesnowBNB"></div>
+        </tr>
+        <tr>
+        <td><input type="number" id="parityquantity" name="parityquantity" min="11" max="3000" value="50"></td>
+        <td><div id="demonowBTC"></div> </td>
+        <td><div id="demonowETH"></div> </td> 
+        <td><div id="demonowBNB"></div> </td>  
+        </tr> 
+        <tr>  
+        <td> <div id="demonow"></div> </td>
+        <td><div id="resultadoBTC"></div></td> 
+        <td><div id="resultadoETH"></div></td>  
+        <td><div id="resultadoBNB"></div></td>
+        </tr>  
+
+
+</td>
+</table>
+<table>
+<tr>
+    <tr>
+    <th><td><h4>USDT</h4></td></th>    
+    </tr>
+    <th>PriceAsk</th>    
+    <th>VolAsk</th>
+    <th>PriceBid</th>
+    <th>VolBid</th>
+    <th>price change</th>
+    <th>price change %</th>
+    <tr>    
+    <td><p class="zoom_col" id="usdt_ask_price"></p></td>
+    <td><p class="zoom_col" id="usdt_ask_vol"></p></td>
+    <td><p class="zoom_col" id="usdt_bid_price"></p></td>
+    <td><p class="zoom_col" id="usdt_bid_vol"></p></td>
+    <td><p class="zoom_col" id="usdt_price_change"></p></td>
+    <td><p class="zoom_col" id="usdt_price_change_percent"></p></td>
+
+
+</tr>
+</tr>
+
+<tr>
+    <tr>
+        <th><td><h4>BTC</h4></td></th>    
+    </tr>
+    <th>PriceAsk</th>    
+    <th>VolAsk</th>
+    <th>PriceBid</th>
+    <th>VolBid</th>
+    <th>price change</th>
+    <th>price change %</th>
+    <tr>    
+        <td><p class="zoom_col" id="btc_ask_price"></p></td>
+        <td><p class="zoom_col" id="btc_ask_vol"></p></td>
+        <td><p class="zoom_col" id="btc_bid_price"></p></td>
+        <td><p class="zoom_col" id="btc_bid_vol"></p></td>
+        <td><p class="zoom_col" id="btc_price_change"></p></td>
+        <td><p class="zoom_col" id="btc_price_change_percent"></p></td>
+    </tr>
+    <tr>
+    <td><p class="zoom_col" id="resultado2_AskBTC"></p></td>
+    <td></td>
+    <td><p class="zoom_col" id="resultado2_BidBTC"></p></td>
+    <td></td>
+    </tr>
+</tr>
+
+<tr>
+    <tr>
+    <th><td><h4>ETH</h4></td></th>
+    
+    </tr>
+    <th>PriceAsk</th>    
+    <th>VolAsk</th>
+    <th>PriceBid</th>
+    <th>VolBid</th>
+    <th>price change</th>
+    <th>price change %</th>
+    <tr>    
+        <td><p class="zoom_col" id="eth_ask_price"></p></td>
+        <td><p class="zoom_col" id="eth_ask_vol"></p></td>
+        <td><p class="zoom_col" id="eth_bid_price"></p></td>
+        <td><p class="zoom_col" id="eth_bid_vol"></p></td>
+        <td><p class="zoom_col" id="eth_price_change"></p></td>
+        <td><p class="zoom_col" id="eth_price_change_percent"></p></td>
+</tr>
+<tr>
+    <td><p class="zoom_col" id="resultado2_AskETH"></p></td>
+    <td></td>
+    <td><p class="zoom_col" id="resultado2_BidETH"></p></td>
+    <td></td>
+    </tr>
+</tr>
+
+<tr>
+    <tr>
+    <th><td><h4>BNB</h4></td></th>
+    
+    </tr>
+    <th>PriceAsk</th>    
+    <th>VolAsk</th>
+    <th>PriceBid</th>
+    <th>VolBid</th>
+    <th>price change</th>
+    <th>price change %</th>
+    <tr>    
+        <td><p class="zoom_col" id="bnb_ask_price"></p></td>
+        <td><p class="zoom_col" id="bnb_ask_vol"></p></td>
+        <td><p class="zoom_col" id="bnb_bid_price"></p></td>
+        <td><p class="zoom_col" id="bnb_bid_vol"></p></td>
+        <td><p class="zoom_col" id="bnb_price_change"></p></td>
+        <td><p class="zoom_col" id="bnb_price_change_percent"></p></td>
+</tr>
+<tr>
+    <td><p class="zoom_col" id="resultado2_AskBNB"></p></td>
+    <td></td>
+    <td><p class="zoom_col" id="resultado2_BidBNB"></p></td>
+    <td></td>
+    </tr>
+</tr>
+
+</div>
+</table>
+           <td>
+   <div id="testebalance"></div>
+        <div style="border:solid gray 1px; padding:20px; width:300px; margin-top:20px;">
+
+            <table>
+ <div hidden id="tradesBTC"></div> <div hidden id="tradesETH"></div><div hidden id="tradesBNB"></div>
+
+<tr>
+<th>Pair</th>
+<th>BTC</th>
+<th>ETH</th>
+<th>BNB</th>
+</tr>
+
+<tr class="teste_com">
+    <td>
+       <p>Price</p> 
+       <p>Price Change</p> 
+       <p>Change %</p> 
+    </td>
+        <td>        
+        <p id="demoBTC"></p>
+        <p id="BTC_price_change"></p>
+        <p id="BTC_price_change_percent"></p>
+        </td>
+        <td>
+        <div id="demoETH" ></div>
+        <p id="ETH_price_change"></p>
+        <p id="ETH_price_change_percent"></p>
+        </td>
+        <td>
+        <p id="demoBNB"></p>
+        <p id="BNB_price_change"></p>
+        <p id="BNB_price_change_percent"></p>
+        </td>
+
+
+</tr>
+
+
+                <h1>Choose Coin</h1>
+                <td> <h2>{{ coin }}</h2> </td>   
+                <td><h3>{{ title }}</h3></td>
+                <td><h3 id="IsParity"></h3></td>
+            <form action="." method="post">
+            
+                <div id="my_balances">              
+            
+                    <select id="my_cryptocoin" name="my_cryptocoin" class="coin" onchange="this.form.submit()">
+                        <option>{{ coin }}</option>
+                        {% for balance in my_balances %}     
+                          {% set thesymbol = balance['asset'] %} 
+
+
+                          <option class="coin"> {{thesymbol}}</option>  
+                              
+                        {% endfor %}   
+                    </select>
+                    <select id="pair_choosed" name="pair_choosed" onchange="this.form.submit()">                      
+                        <option>{{ title }}</option>
+                        {% for symbol in symbols %}
+                        {% set opsymbol = symbol['symbol'] %}
+                        {% if coin in opsymbol %}              
+                        <option>{{opsymbol}}</option>
+                        {% endif %}
+                        {% endfor %}
+
+                    </select>
+
+            </form>
+        </table>
+            <table>
+            <tr style="border: solid black 1px">
+           
+            <td style="border: solid black 1px"><span>Min SELL</span><p class="zoom_col" id="resultado_Minimo_Ask"></p><p id="resultado_Minimo_Ask_Pair"></p></td>
+            <td style="border: solid black 1px"><span>Min BUY</span><p class="zoom_col" id="resultado_Minimo_Bid"></p><p id="resultado_Minimo_Bid_Pair"></p><p id="form_Min_Bid"></p></td>
+            <td style="border: solid black 1px"><span>Max SELL</span><p class="zoom_col" id="resultado_Maximo_Ask"></p><p id="resultado_Maximo_Ask_Pair"></p><p id="form_Max_Ask"></p></td>
+            <td style="border: solid black 1px"><span>Max BUY</span><p class="zoom_col" id="resultado_Maximo_Bid"></p><p id="resultado_Maximo_Bid_Pair"></p></td>
+            </tr>
+            </table>
+            
+
+
+        <h3>Buy & Sell Cripto</h3>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div style="padding: 10px; background: pink; margin-bottom: 10px; border: solid red 1px; color: red;">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+
+        
+        <form action="/buy" method="post">
+            <input type="text" id="quantitybuy" name="quantitybuy" placeholder="Quantidade" value=""/>
+            
+            <input type="text" id="buyprice" name="buyprice" placeholder="Preço" value="" />
+            <select id="symbolbuy" name="symbolbuy" value="">
+                <option>{{ title }}</option>
+                {% for symbol in symbols %}
+                {% set opsymbol = symbol['symbol'] %}
+                {% if coin in opsymbol %}              
+                <option>{{opsymbol}}</option>
+                {% endif %}
+                {% endfor %}
+
+            </select>
+            <input id="buy" type="submit" name="buy" value="buy" />
+        </form>
+    
+        {% for balance in my_balances %}
+        {% set numberfree = balance['free'] | float %}
+        {% set balance_asset = balance['asset'] %} 
+        {% if balance_asset == coin %} 
+        <form action="/sell" method="post">
+            <input type="text" id="quantitysell" name="quantitysell" placeholder="Quantidade" value={{numberfree}} />
+            <input type="text" id="sellprice" name="sellprice" placeholder="Preço" value=""/>
+            <select id="symbolsell" name="symbolsell" value="">
+                {% endif %}
+                {% endfor %} 
+
+                <option>{{ title }}</option>
+                {% for symbol in symbols %}
+                {% set opsymbol = symbol['symbol'] %}
+                {% if coin in opsymbol %}              
+                <option>{{opsymbol}}</option>
+                {% endif %}
+                {% endfor %}
+
+            </select>
+            <input id="sell"  type="submit" name="sell" value="sell" />
+        </form>
+    </div>
+</td>  
+
+<td>
+<!-- 
+    {% for symbol in symbols %}
+    {% set opsymbol = symbol['symbol'] %}
+    {% if opsymbol == title %}    
+    {{opsymbol}}
+    {{symbol['baseAssetPrecision']}}
+    {{symbol['quoteAssetPrecision']}}
+    {{symbol['quotePrecision']}}
+    
+    {% endif %} 
+    {% endfor %}  -->
+
+
+    <div style="border:solid gray 1px; padding:20px; width:300px; margin-top:20px;">
+        <div id="datenow"></div>
+
+
+<table id="myTable" cellpadding="0" cellspacing="0">
+    <h2>Balances</h2>
+
+    <tr>
+        <th>Coin</th>
+        <th>Balance Free</th> 
+        <th>Balance Locked</th>
+        <th>To USDT</th>
+        
+    </tr>
+    {% for balance in my_balances %}
+    {% set numberfree = balance['free'] | float %}
+    {% set numberlocked = balance['locked'] | float %}
+    {% set balance_asset = balance['asset'] %}    
+    <tr> 
+        <td>    
+          {% if numberfree > 0 or numberlocked > 0 %}          
+         <!--  <div class="teste_com"> {{balance['asset']}} </div>-->
+         <div class="teste_com"> {{balance_asset}} </div>     
+
+          {% endif %} 
+        </td>
+        <td>
+            {% if numberfree > 0 %} 
+            <div class="teste_com">  {{numberfree}} </div>    
+
+            {% endif %} 
+        </td> 
+        <td>
+            {% if numberlocked > 0 %} 
+            <div class="teste_com">{{numberlocked}}</div>    
+            {% endif %}
+        </td> 
+        <td> 
+            {% if numberfree > 0 or numberlocked > 0 %}
+            <div class="teste_com">{{(numberlocked+numberfree)}}</div>    
+            {% endif %}
+        </td> 
+    
+    </tr>
+    {% endfor %} 
+</td></table></table>
+    
+
+<tr>
+<td>BTC ASK: {{depth_BTC['asks'][0][0]}}</td>
+<td>BTC Bid: {{depth_BTC['bids'][0][0]}}</td>
+</tr>
+
+<tr>
+<td><div id="tst"></div></td>
+</tr>
+
+<!-- 
+<tr>
+    <td>{{wbs}}</td>
+    </tr> -->
+
+   
+<!--
+    <h3>Settings</h3>
+
+    <div id=" settings">
+
+        <input type="checkbox" /> RSI
+        <input type="text" id="rsi_length" name="rsi_length" placeholder="14" />
+        <p>overbought <input type="text" id="rsi_overbought" name="rsi_overbought" placeholder="70" />
+        <p>oversold <input type="text" id="rsi_oversold" name="rsi_oversold" placeholder="30" />
+
+    </div>-->
+  
+  
+        
+       
+            <div class="new">
+                <table>
+                    <tr>
+                        <th>Coin</th>
+                        <th>Balance Free</th> 
+                        <th>Balance Locked</th>
+                        <th>To USDT</th>
+                        
+                    </tr> 
+                    
+                    <tr>
+
+                        <td id="response_asset"> </td>
+                        <td id="response_free"> </td>
+                        <td id="response_locked"></td>
+                    </tr>
+</table> 
+        </div>
+
+    
+   <div id="exist_order"></div>
+
+   
+   <!-- <p id="p_BNB"></p>
+    <p id="last_price_BNB"></p> -->
+   <p hidden id="last_price_buy"></p>  
+   <p hidden id="last_qty_buy"></p>
+   <p hidden id="last_sell_price"></p>
+   <p hidden id="last_hour_buy"></p>
+   <p hidden id="last_hour_sell"></p>
+<div id="trade"></div>
+<div id="trade2"></div>
+
+
+<table id="converts">
+<tr>
+<th>Pair</th>
+<th>Price Buy</th>
+<th>Qty Buy</th>
+<th>Last is Buy or Sell</th>
+<th>Exist order open</th>
+</tr>
+<tr>
+
+    <td style="text-align: center;"><p id="pair_buyed"></p></td>
+    <td style="text-align: center;"><p id="price_buy"></p></td>
+    <td style="text-align: center;"><p id="qty_buy"></p></td>
+    <td style="text-align: center;"> <p id="last_side"></p></td>
+    <td style="text-align: center;"> <p id="order_exist"></p></td>
+
+</tr>
+
+<tr>
+    <th>BNB Price USD</th>
+    <th>BNB Price Buyed</th>
+    <th>Price to Sell BNB</th>
+    <th>Price to Sell USD</th>
+    <th>Price Sell USD now</th>
+</tr>
+<tr>
+     <td style="text-align: center;"><p id="BNB_buyed_USD"></p></td>
+     <td style="text-align: center;"><p id="BNB_price_on"></p></td>
+     <td style="text-align: center;"> <p id="price_sell_BNB"></p></td>
+     <td style="text-align: center;"> <p id="sell_BNB_USD"></p></td>
+     <td style="text-align: center;"> <p id="sell_BNB_USD_now"></p></td>
+     
+</tr>
+<tr>
+    <th>ETH Price USD</th>
+    <th>ETH Price Buyed</th>
+    <th>Price to Sell ETH</th>
+    <th>Price to Sell USD</th>
+    <th>Price Sell USD now</th>
+
+</tr>
+
+<tr>
+ 
+    <td style="text-align: center;"><p id="ETH_buyed_USD"></p></td>
+    <td style="text-align: center;"><p id="ETH_price_on"></p></td>
+    <td style="text-align: center;"><p id="price_sell_ETH"></p></td>
+    <td style="text-align: center;"> <p id="sell_ETH_USD"></p></td>
+    <td style="text-align: center;"> <p id="sell_ETH_USD_now"></p></td>
+</tr>
+<tr>
+    <th>BTC Price USD</th>
+    <th>BTC Price Buyed</th>
+    <th>Price to Sell BTC</th>
+    <th>Price to Sell USD</th>
+    <th>Price Sell USD now</th>
+</tr>
+
+<tr>
+    <td style="text-align: center;"><p id="BTC_buyed_USD"></p></td>
+    <td style="text-align: center;"><p id="BTC_price_on"></p></td>
+    <td style="text-align: center;"><p id="price_sell_BTC"></p></td>
+    <td style="text-align: center;"> <p id="sell_BTC_USD"></p></td>
+    <td style="text-align: center;"> <p id="sell_BTC_USD_now"></p></td>
+</tr>
+
+<tr>
+    <th>Price USDT</th>
+    <th>Price Buyed USDT</th>
+    <th>Price to Sell USDT</th>
+    <th>Price to Sell USDT</th>
+    <th>Price Sell USDT now</th>
+</tr>
+
+<tr>
+    <td style="text-align: center;"><p id="USDT_buyed_USD"></p></td>
+    <td style="text-align: center;"><p id="USDT_price_on"></p></td>
+    <td style="text-align: center;"><p id="price_sell_USDT"></p></td>
+    <td style="text-align: center;"> <p id="sell_USDT_USD"></p></td>
+    <td style="text-align: center;"> <p id="sell_USDT_USD_now"></p></td>
+</tr>
+
+
+</table>
+
+</div>
+
+    <div class="row">
+        <div class="column">        
+    <table id="my_orders">         
+        <h2>My Orders</h2>
+        
+            <tr>
+                <th>orderId</th>
+                <th>symbol</th>
+                <th>price</th>
+                <th>origQty</th> 
+                <th>side</th> 
+                <th>Timestamp</th> 
+                <th>Time</th> 
+            </tr>
+
+            {% for order in my_orders  %}
+            {% set orderID = order['orderId'] | int %} 
+            {% set orderSymbol = order['symbol'] %} 
+            <tr>
+             
+                <td style="text-align: center;">{{order['orderId']}}</td> 
+                <td style="text-align: center;">{{order['symbol']}}</td>
+                <td style="text-align: center;">{{order['price']}}</td>
+                <td style="text-align: center;">{{order['origQty']}} </td>
+                <td style="text-align: center;">{{order['side']}}</td>
+                <td style="text-align: center;">{{order['time']}}</td>
+                <td style="text-align: center;">{{(clever_function(order['time']/1000)).strftime('%d/%m/%Y %H:%M:%S')}}</td>
+                <td>
+                    <form action="/cancel" method="post">
+                    <input hidden type="text" id="orderID" name="orderID" value={{orderID}}>
+                    <input hidden type="text" id="orderSymbol" name="orderSymbol" value={{orderSymbol}}>
+                    <input id="cancel" type="submit" name="cancel" value="cancel" />
+                </form> </td>
+            </tr>
+            {% endfor %}     
+            
+            
+        </table>
+    
+    </div>
+    </div>
+    <!-- <p><button onclick="sortByDate()">Sort</button></p> -->
+
+    <div class="row">
+    
+    <div class="column"> 
+    
+    <table id="resultsBuy">
+    <h2>My Trades BUY</h2>
+
+<thead>
+        <tr>
+            <th>symbol</th>
+            <th>price</th>
+            <th>qty</th>
+            <th>commission</th> 
+            <th>CAsset</th> 
+            <th hidden>Timestamp</th> 
+            <th>time</th> 
+            <th>isBuyer</th> 
+            <th>isMaker</th>  
+        </tr>
+</thead>
+<tbody>
+        {% for trades in my_trades_BNB  %}
+        {% set trade_timestamp = trades['time'] | int %}
+        {% set side = trades['isBuyer'] %}     
+        {% if side == True %}
+
+
+        <tr class="reverseBuy"> 
+            <td>{{trades['symbol']}}</td>
+            <td>{{trades['price']}}</td>
+            <td>{{trades['qty']}} </td>
+            <td>{{trades['commission']}}</td>
+            <td>{{trades['commissionAsset']}}</td>
+            <td hidden>{{trades['time']}}</td>
+            <td>{{(clever_function(trade_timestamp/1000)).strftime('%d/%m/%Y %H:%M:%S')}}</td>
+            <td>{{trades['isBuyer']}}</td>
+            <td>{{trades['isMaker']}}</td>
+        </tr>
+        {% endif %}
+       
+        {% endfor %}    
+
+        {% for trades in my_trades_ETH  %}
+        {% set trade_timestamp = trades['time'] | int %}
+        {% set side = trades['isBuyer'] %}
+        {% if side == True %}
+        <tr class="reverseBuy"> 
+            
+            <td>{{trades['symbol']}}</td>
+            <td>{{trades['price']}}</td>
+            <td>{{trades['qty']}} </td>
+            <td>{{trades['commission']}}</td>
+            <td>{{trades['commissionAsset']}}</td>
+            <td hidden>{{trades['time']}}</td>
+            <td>{{(clever_function(trade_timestamp/1000)).strftime('%d/%m/%Y %H:%M:%S')}}</td>
+            <td>{{trades['isBuyer']}}</td>
+            <td>{{trades['isMaker']}}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}           
+    
+        {% for trades in my_trades_BTC  %}
+        {% set trade_timestamp = trades['time'] | int %}
+        {% set side = trades['isBuyer'] %}
+        {% if side == True %}
+        <tr class="reverseBuy"> 
+            <td>{{trades['symbol']}}</td>
+            <td>{{trades['price']}}</td>
+            <td>{{trades['qty']}} </td>
+            <td>{{trades['commission']}}</td>
+            <td>{{trades['commissionAsset']}}</td>
+            <td hidden>{{trades['time']}}</td>
+            <td>{{(clever_function(trade_timestamp/1000)).strftime('%d/%m/%Y %H:%M:%S')}}</td>
+            <td>{{trades['isBuyer']}}</td>
+            <td>{{trades['isMaker']}}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}           
+    
+        {% for trades in my_trades_USDT  %}
+        {% set trade_timestamp = trades['time'] | int %}
+        {% set side = trades['isBuyer'] %}
+        {% if side == True %}
+        <tr class="reverseBuy"> 
+            <td>{{trades['symbol']}}</td>
+            <td>{{trades['price']}}</td>
+            <td>{{trades['qty']}} </td>
+            <td>{{trades['commission']}}</td>
+            <td>{{trades['commissionAsset']}}</td>
+            <td hidden>{{trades['time']}}</td>
+            <td>{{(clever_function(trade_timestamp/1000)).strftime('%d/%m/%Y %H:%M:%S')}}</td>
+            <td>{{trades['isBuyer']}}</td>
+            <td>{{trades['isMaker']}}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}   
+         </tbody>
+          </table> 
+             
+</div>      
+
+<div class="column">  
+<table id="resultsSell">
+
+<h2>My Trades SELL</h2>
+
+
+<thead>
+    <tr>
+        <th>symbol</th>
+        <th>price</th>
+        <th>qty</th>
+        <th>commission</th> 
+        <th>CAsset</th> 
+        <th hidden>Timestamp</th> 
+        <th>time</th> 
+        <th>isBuyer</th> 
+        <th>isMaker</th>  
+    </tr>
+</thead>
+<tbody>
+   
+    {% for trades in my_trades_BNB %}
+    {% set trade_timestamp = trades['time'] | int %}
+    {% set side = trades['isBuyer'] %}
+    {% if side == False %}
+    <tr class="reverseSell"> 
+      
+        
+        <td>{{trades['symbol']}}</td>
+        <td>{{trades['price']}}</td>
+        <td>{{trades['qty']}} </td>
+        <td>{{trades['commission']}}</td>
+        <td>{{trades['commissionAsset']}}</td>
+        <td hidden>{{trades['time']}}</td>
+        <td>{{(clever_function(trade_timestamp/1000)).strftime('%d/%m/%Y %H:%M:%S')}}</td>
+        <td>{{trades['isBuyer']}}</td>
+        <td>{{trades['isMaker']}}</td>
+        
+        
+    </tr>
+    {% endif %}
+    {% endfor %}  
+ 
+    {% for trades in my_trades_ETH  %}
+    {% set trade_timestamp = trades['time'] | int %}
+    {% set side = trades['isBuyer'] %}
+    {% if side == False %}
+    <tr class="reverseSell"> 
+        
+        <td>{{trades['symbol']}}</td>
+        <td>{{trades['price']}}</td>
+        <td>{{trades['qty']}} </td>
+        <td>{{trades['commission']}}</td>
+        <td>{{trades['commissionAsset']}}</td>
+        <td hidden>{{trades['time']}}</td>
+        <td>{{(clever_function(trade_timestamp/1000)).strftime('%d/%m/%Y %H:%M:%S')}}</td>
+        <td>{{trades['isBuyer']}}</td>
+        <td>{{trades['isMaker']}}</td>
+    </tr>
+    {% endif %}
+    {% endfor %}           
+
+    {% for trades in my_trades_BTC  %}
+    {% set trade_timestamp = trades['time'] | int %}
+    {% set side = trades['isBuyer'] %}
+    {% if side == False %}
+    <tr class="reverseSell"> 
+        <td>{{trades['symbol']}}</td>
+        <td>{{trades['price']}}</td>
+        <td>{{trades['qty']}} </td>
+        <td>{{trades['commission']}}</td>
+        <td>{{trades['commissionAsset']}}</td>
+        <td hidden>{{trades['time']}}</td>
+        <td>{{(clever_function(trade_timestamp/1000)).strftime('%d/%m/%Y %H:%M:%S')}}</td>
+        <td>{{trades['isBuyer']}}</td>
+        <td>{{trades['isMaker']}}</td>
+    </tr>
+    {% endif %}
+    {% endfor %}           
+
+    {% for trades in my_trades_USDT  %}
+    {% set trade_timestamp = trades['time'] | int %}
+    {% set side = trades['isBuyer'] %}
+    {% if side == False %}
+    <tr class="reverseSell"> 
+        <td>{{trades['symbol']}}</td>
+        <td>{{trades['price']}}</td>
+        <td>{{trades['qty']}} </td>
+        <td>{{trades['commission']}}</td>
+        <td>{{trades['commissionAsset']}}</td>
+        <td hidden>{{trades['time']}}</td>
+        <td>{{(clever_function(trade_timestamp/1000)).strftime('%d/%m/%Y %H:%M:%S')}}</td>
+        <td>{{trades['isBuyer']}}</td>
+        <td>{{trades['isMaker']}}</td>
+    </tr>
+    {% endif %}
+    {% endfor %}   
+   
+</tbody>
+</table>  
+
+</div>      
+
+</div>
+
+
+                <table>
+                <td><span class="zoom_col" id="chartContainer1"></span></td>
+                <td><span class="zoom_col" id="chartContainer2"></span></td>
+                <td><span class="zoom_col" id="chartContainer3"></span></td>
+                <td><span class="zoom_col" id="chartContainer4"></span></td>
+                <td><span class="zoom_col" id="chartContainer5"></span></td>
+                <td><span class="zoom_col" id="chartContainer6"></span></td>            
+                <td><span class="zoom_col" id="chartContainer7"></span></td>
+                <td><span class="zoom_col" id="chartContainer8"></span></td>
+                </table>
+  
+   <!--   
+    <div id="my_fees"><div class="column">
+        <h2>All Fees</h2>
+        <table>
+            <tr>
+                <th>Symbol</th>
+                <th>Taker - Tomador</th> 
+                <th>Maker - Criador</th>
+            </tr>      
+            {% for tradeFee in my_fees %}       
+            <tr>            
+                <td>
+                    <div>  {{tradeFee['symbol']}} </div>
+                </td> 
+                <td>
+                    <div>   {{tradeFee['taker']}} </div>
+                </td>
+                <td>
+                    <div>  {{tradeFee['maker']}} </div>
+               </td>
+            </tr>
+            {% endfor %}</div>
+        </table>
+    </div>
+
+   
+    <div id="my_fees"><div class="column">
+        <h2>All Fees</h2>
+        <table>
+            <tr>
+                <th>Symbol</th>
+                <th>Taker - Tomador</th> 
+                <th>Maker - Criador</th>
+            </tr>
+            {% for tradeFee in my_fees %}           
+            <tr>            
+                <td>
+                    <div class="teste_com">  {{tradeFee['symbol']}} </div>
+                </td> 
+                <td>
+                    <div class="teste_com">   {{tradeFee['taker']}} </div>
+                </td>
+                <td>
+                    <div class="teste_com">  {{tradeFee['maker']}} </div>
+               </td>
+            </tr>
+            {% endfor %}</div>
+        </table>
+    </div>
+    
+
+    <div id="my_trades_BUSD"> <div class="column">
+        <h2>My Trades BUSD</h2>
+        
+        <table>
+            <tr>
+                <th>id</th>
+                <th>price</th>
+                <th>qty</th>
+                <th>commission</th> 
+                <th>commissionAsset</th> 
+                <th>time</th> 
+                <th>isBuyer</th> 
+                <th>isMaker</th>  
+            </tr>
+            {% for trades in my_trades_BUSD  %}
+            <tr> 
+                <td>    
+                    <div class="teste_com">  {{trades['id']}} </div>
+                </td>
+                <td>    
+                    <div class="teste_com">  {{trades['price']}} </div>
+                </td>
+
+                <td>
+                    <div class="teste_com">  {{trades['qty']}}  </div>
+                </td>
+                <td>
+                    <div class="teste_com">  {{trades['commission']}} </div>
+                </td>
+                <td>
+                    <div class="teste_com">  {{trades['commissionAsset']}}  </div>
+                </td>
+                <td>
+                    <div class="teste_com">  {{trades['time']}}  </div>
+                </td> 
+                <td>
+                    <div class="teste_com"> {{trades['isBuyer']}}  </div>
+                </td>
+                <td>
+                    <div class="teste_com">  {{trades['isMaker']}}  </div>
+                </td>
+            </tr>
+            {% endfor %} </div>
+       
+        </table>
+  
+    </div>
+    <div id="my_trades_USDT"><div class="columnone">
+        <h2>My Trades USDT</h2>
+        
+        <table>
+            <tr>
+                <th>id</th>
+                <th>price</th>
+                <th>qty</th>
+                <th>commission</th> 
+                <th>commissionAsset</th> 
+                <th>time</th> 
+                <th>isBuyer</th> 
+                <th>isMaker</th>  
+            </tr>
+            {% for trades in my_trades_USDT  %}
+            <tr> 
+                <td>    
+                    {{trades['id']}}
+                </td>
+                <td>    
+                    {{trades['price']}}
+                </td>
+
+                <td>
+                    {{trades['qty']}} 
+                </td>
+                <td>
+                    {{trades['commission']}} 
+                </td>
+                <td>
+                    {{trades['commissionAsset']}} 
+                </td>
+                <td>
+                    {{trades['time']}} 
+                </td>
+                <td>
+                    {{trades['isBuyer']}} 
+                </td>
+                <td>
+                    {{trades['isMaker']}} 
+                </td>
+            </tr>
+            {% endfor %} </div>
+       
+        </table>
+  
+    </div>
+-->
+
+
+<!--
+
+{% block script %} 
+{% for balance in my_balances %}
+{% set numberfree = balance['free'] | float %}
+{% set numberlocked = balance['locked'] | float %}
+{% set balance_asset = balance['asset'] %} 
+{% if numberfree > 0 or numberlocked > 0 %} 
+
+<script>    
+    var allbalance = []; 
+    var name = JSON.parse('{{ balance_asset | tojson }}');  
+    allbalance.push(name);
+   // for(var i=0; i<=10; i++) {
+   //     allbalance.push(name.toString());
+//}
+    //for(var i in name) {
+   //     allbalance.push(name[i]);
+  //  }
+  document.getElementById("ETH_USDT").innerHTML = allbalance;
+    //allbalance.push(name);
+    //document.getElementById("ETH_USDT").innerHTML = allbalance;
+//alert(name);
+</script>
+{% endif %}
+{% endfor %} 
+{% endblock %} 
+
+-->
+<!-- <script>src="demo.js"</script>
+
+<script src="{{ url_for('static', filename='crypto-js.js') }}"></script> -->
+
+
+
+
+<script>
+    
+    function sortByDateBuy() {
+      var table, rows, switching, i, x, y, shouldSwitch;
+      table = document.getElementById("resultsBuy");
+      switching = true;
+      /*Make a loop that will continue until
+      no switching has been done:*/
+      while (switching) {
+        //start by saying: no switching is done:
+        switching = false;
+        rows = table.rows;
+        /*Loop through all table rows (except the
+        first, which contains table headers):*/
+        for (i = 1; i < (rows.length - 1); i++) {
+          //start by saying there should be no switching:
+          shouldSwitch = false;
+          /*Get the two elements you want to compare,
+          one from current row and one from the next:*/
+          x = rows[i].getElementsByTagName("TD")[5];
+          y = rows[i + 1].getElementsByTagName("TD")[5];
+          //check if the two rows should switch place:
+          if (Number(x.innerHTML) > Number(y.innerHTML)) {
+            //if so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
+        }
+        if (shouldSwitch) {
+          /*If a switch has been marked, make the switch
+          and mark that a switch has been done:*/
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+        }
+      }
+   
+      $('#resultsBuy tbody tr:last-child').each(function() {
+    var last_pair_buyed = ($(this).find("td:nth-child(1)").html());  
+    var last_buyed = parseFloat($(this).find("td:nth-child(2)").html());  
+    var qty_buyed = parseFloat($(this).find("td:nth-child(3)").html());  
+    var last_hour_buy = parseFloat($(this).find("td:nth-child(6)").html());  
+         
+    // var price_BNB = parseFloat($( "#p_BNB" ).html());  
+
+    document.getElementById('pair_buyed').innerHTML = last_pair_buyed; 
+    document.getElementById('last_price_buy').innerHTML = last_buyed; 
+    document.getElementById('last_qty_buy').innerHTML = qty_buyed; 
+    document.getElementById('last_hour_buy').innerHTML = last_hour_buy; 
+
+    // document.getElementById('last_price_BNB').innerHTML = price_BNB; 
+
+   
+
+    // +(parseFloat(customerId)*0.5/100)
+    });
+
+    }
+    
+    function sortByDateSell() {
+      var table, rows, switching, i, x, y, shouldSwitch;
+      table = document.getElementById("resultsSell");
+      switching = true;
+      /*Make a loop that will continue until
+      no switching has been done:*/
+      while (switching) {
+        //start by saying: no switching is done:
+        switching = false;
+        rows = table.rows;
+        /*Loop through all table rows (except the
+        first, which contains table headers):*/
+        for (i = 1; i < (rows.length - 1); i++) {
+          //start by saying there should be no switching:
+          shouldSwitch = false;
+          /*Get the two elements you want to compare,
+          one from current row and one from the next:*/
+          x = rows[i].getElementsByTagName("TD")[5];
+          y = rows[i + 1].getElementsByTagName("TD")[5];
+          //check if the two rows should switch place:
+          if (Number(x.innerHTML) > Number(y.innerHTML)) {
+            //if so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
+        }
+        if (shouldSwitch) {
+          /*If a switch has been marked, make the switch
+          and mark that a switch has been done:*/
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+        }
+      }
+      $('#resultsSell tbody tr:last-child').each(function() {
+    var customerId = $(this).find("td:nth-child(2)").html();   
+    var last_hour_sell = parseFloat($(this).find("td:nth-child(6)").html());
+
+
+    document.getElementById('last_sell_price').innerHTML = customerId; 
+    document.getElementById('last_hour_sell').innerHTML = last_hour_sell;
+    // $('#quantitysell').val(customerId);
+    });    
+    }
+ 
+    
+function Reorder() {   
+function query(sel, el) {
+  return [].slice.call((el || document).querySelectorAll(sel));   }
+
+var tables = query('#resultsBuy');
+tables.forEach(function (table) {
+var widgets = query('tr.reverseBuy', table);
+widgets.reverse().forEach(function (widget) {
+table.appendChild(widget);
+
+
+  });
+
+
+});  
+
+
+function query(sel, el) {
+  return [].slice.call((el || document).querySelectorAll(sel));   }
+
+var tables = query('#resultsSell');
+tables.forEach(function (table) {
+var widgets = query('tr.reverseSell', table);
+widgets.reverse().forEach(function (widget) {
+table.appendChild(widget);
+
+  });
+
+});  
+
+    }
+
+    </script>
+
+
+
+<!-- 
+
+<script>
+    setInterval(ticker,5000);
+    function ticker(){
+
+    var texto = $('#my_cryptocoin :selected').text();
+    var res = texto.toUpperCase();
+  
+    var burl = "https://api.binance.com";
+    
+    var query = '/api/v1/ticker/24hr';
+        
+    query += '?symbol='+res+'USDT';
+    
+    var url = burl + query;
+        
+    var ourRequest = new XMLHttpRequest();
+    
+    ourRequest.open('GET',url,true);
+    ourRequest.onload = function(){
+        ourData = JSON.parse(ourRequest.responseText);
+        //console.log(ourData);
+        var theresponse = [];
+        theresponse.push(parseFloat(ourData["lastPrice"]));
+        //theresponse.push((ourData["lastPrice"]).toString());
+
+        document.getElementById("tst").innerHTML = JSON.stringify(ourData);
+    }
+    //coin.push(ourData["balances"].toString());
+    ourRequest.send();    
+ }       
+    </script>
+ -->
+
+
+
+
+
+<!-- 
+
+   <script>
+      
+      setInterval(account,5000);
+      function account(){
+
+    var burl = 'https://api.binance.com';
+    var endPoint = '/api/v3/account';
+    var dataQueryString = 'recvWindow=20000&timestamp=' + Date.now();
+    
+    var keys = {
+        'akey' : 'LF5A5oDrw1Bu1hSWTUontXBs1l7lGZbYrCl8Fkb07A0UbkIU43kovbuRuCvkDEOH',
+        'skey' : 'vz2PGrm3AAawT84ImxO5JECiUAHjKnJlzzfWhCtso4OgfubmYkFRbBKoTahq9jyi'
+    }
+    
+    var signature = CryptoJS.HmacSHA256(dataQueryString ,keys['skey']).toString(CryptoJS.enc.Hex);
+    
+    var ourRequest = new XMLHttpRequest();
+    
+    var url = burl + endPoint + '?' + dataQueryString + '&signature=' + signature;
+    
+    ourRequest.open('GET', url, true);
+    ourRequest.setRequestHeader('X-MBX-APIKEY',keys['akey']);
+    
+    ourRequest.onload = function(){
+        ourData = JSON.parse(ourRequest.responseText);
+        var allcoins = (ourData["balances"].length);
+        var theresponseasset = [];  
+        var theresponsefree = [];              
+        var theresponselocked = [];
+
+        // var table = document.getElementById("BalanceTable");
+        // var row = table.insertRow(0);
+        // var cell1 = row.insertCell(0);
+        // var cell2 = row.insertCell(1);
+
+
+        for(i=0;i<allcoins;i++){
+           if ((ourData["balances"][i]['free']) > 0) {
+
+             theresponseasset.push(ourData["balances"][i]['asset']);
+             theresponsefree.push(ourData["balances"][i]['free']);
+             theresponselocked.push(ourData["balances"][i]['locked']);  
+             
+             var tabela = document.getElementById('BalanceTable');
+             var linhas = tabela.getElementsByTagName('tr');
+
+               
+           }
+        }   
+
+    }
+    ourRequest.send();
+  }   
+
+</script>
+ -->
+
+
+
+
+
+
+<!--  
+<script>
+        // setInterval(buy,5000);
+      function buy(){
+
+//Global Modules
+const crypto = require('crypto');
+
+//Installed Modules
+var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+
+
+var burl = "https://api.binance.com";
+var endPoint = "/api/v3/order";
+var dataQueryString = "symbol=BNBUSDT&side=BUY&type=LIMIT&timeInForce=GTC&quantity=0.023&price=473.44&recvWindow=20000&timestamp=" + Date.now();
+
+var keys = {
+    "akey" : 'LF5A5oDrw1Bu1hSWTUontXBs1l7lGZbYrCl8Fkb07A0UbkIU43kovbuRuCvkDEOH',
+    "skey" : 'vz2PGrm3AAawT84ImxO5JECiUAHjKnJlzzfWhCtso4OgfubmYkFRbBKoTahq9jyi'
+}
+
+var signature = crypto.createHmac('sha256',keys['skey']).update(dataQueryString).digest('hex');
+
+var url = burl + endPoint + '?' + dataQueryString + '&signature=' + signature;
+
+var ourRequest = new XMLHttpRequest();
+
+ourRequest.open('POST',url,true);
+ourRequest.setRequestHeader('X-MBX-APIKEY', keys['akey']);
+
+ourRequest.onload = function(){
+    console.log(ourRequest.responseText);
+}
+ourRequest.send();
+      }
+
+</script> -->
+
+
+<script>
+    $('#parityquantity').keyup(function () {
+      
+      // Se não for número muda para nada 
+      if(!$.isNumeric($(this).val())){
+         $(this).val('');   
+      }
+      
+      // Se for maior que máximo altera para o máximo
+      if($(this).val() > $(this).attr('max')){
+         $(this).val( $(this).attr('max') );   
+      }
+      
+      // Se for menor que o minimo (mas diferente de nada, porque se apagar é nada) muda para o minimo
+      if($(this).val() < $(this).attr('min') && $(this).val() != ''){
+         $(this).val( $(this).attr('min') );   
+      }
+      
+      // Se for diferente de nada ele muda o link para o obtido
+      // Se for igual ao nada o link não será modificado
+      if($(this).val() != ''){
+         qty = $(this).val();
+      }
+      
+      // Insere o link como TEXT, altere isto!
+      // Apenas para visualização!
+     // $('demostracao').text('/busca/quantidade='+qty);
+      
+    });
+    </script>
+
+
+<script> 
+    function myFunction() {
+    var select = document.getElementById('my_cryptocoin');
+    var text = select.options[select.selectedIndex].text;
+   // document.getElementById("demo").innerHTML = text; 
+}
+    </script>
+    
+
+
+<script>
+ 
+    function calcular() {
+      setInterval(function(){ 
+      const roundAccurately = (number, decimalPlaces) => Number(Math.round(number + "e" + decimalPlaces) + "e-" + decimalPlaces)
+      
+      var texto = $('#my_cryptocoin :selected').text();
+     // var res = texto.toLowerCase();
+           
+     
+     Number.prototype.countDecimals = function () {
+        if(Math.floor(this.valueOf()) === this.valueOf()) return 0;
+        return this.toString().split(".")[1].length || 0; 
+            }
+
+            
+        var x = parseFloat(document.getElementById('bnb_bid_vol').textContent);
+        var x_count = x.countDecimals(); // 9
+        //document.getElementById("tst5").innerHTML = x.countDecimals();
+
+
+
+      var n1BTC = parseFloat(document.getElementById('demonow').textContent);
+      var n2BTC = parseFloat(document.getElementById('demonowBTC').textContent);
+      var n3BTC = parseFloat(document.getElementById('demoBTC').textContent);
+
+      var n1ETH = parseFloat(document.getElementById('demonow').textContent);
+      var n2ETH = parseFloat(document.getElementById('demonowETH').textContent);
+      var n3ETH = parseFloat(document.getElementById('demoETH').textContent);
+
+      var n1BNB = parseFloat(document.getElementById('demonow').textContent);
+      var n2BNB = parseFloat(document.getElementById('demonowBNB').textContent);
+      var n3BNB = parseFloat(document.getElementById('demoBNB').textContent);
+
+      var n1LA_BTC = parseFloat(document.getElementById('btc_ask_price').textContent);      
+      var n2LB_BTC = parseFloat(document.getElementById('btc_bid_price').textContent);
+
+      var n1LA_ETH = parseFloat(document.getElementById('eth_ask_price').textContent);      
+      var n2LB_ETH = parseFloat(document.getElementById('eth_bid_price').textContent);
+
+      var n1LA_BNB = parseFloat(document.getElementById('bnb_ask_price').textContent);  
+      var n2LB_BNB = parseFloat(document.getElementById('bnb_bid_price').textContent);
+
+      var n1LA_USDT = parseFloat(document.getElementById('usdt_ask_price').textContent);
+      var n2LB_USDT = parseFloat(document.getElementById('usdt_bid_price').textContent);
+
+
+     var arr = [n2LB_BTC*n3BTC*n1BTC, n2LB_ETH*n3ETH*n1BTC, n2LB_BNB*n3BNB*n1BTC, n2LB_USDT*n1BTC];
+      var Minimo_Ask = roundAccurately(Math.min(n1LA_BTC*n3BTC*n1BTC, n1LA_ETH*n3ETH*n1BTC,n1LA_BNB*n3BNB*n1BTC,n1LA_USDT*n1BTC),2);
+      var Minimo_Bid = roundAccurately(Math.min.apply(null, arr.filter(Boolean)),2);
+      var Maximo_Ask = roundAccurately(Math.max(n1LA_BTC*n3BTC*n1BTC, n1LA_ETH*n3ETH*n1BTC,n1LA_BNB*n3BNB*n1BTC,n1LA_USDT*n1BTC),2);
+      var Maximo_Bid = roundAccurately(Math.max(n2LB_BTC*n3BTC*n1BTC, n2LB_ETH*n3ETH*n1BTC,n2LB_BNB*n3BNB*n1BTC,n2LB_USDT*n1BTC),2);
+
+      document.getElementById('resultadoBTC').innerHTML = roundAccurately(n1BTC*n2BTC*n3BTC,2);
+      document.getElementById('resultadoETH').innerHTML = roundAccurately(n1ETH*n2ETH*n3ETH,2);      
+      document.getElementById('resultadoBNB').innerHTML = roundAccurately(n1BNB*n2BNB*n3BNB,2);
+
+      document.getElementById('resultado2_AskBTC').innerHTML = roundAccurately(n1LA_BTC*n3BTC,2);
+      document.getElementById('resultado2_BidBTC').innerHTML = roundAccurately(n2LB_BTC*n3BTC,2);
+          
+      document.getElementById('resultado2_AskETH').innerHTML = roundAccurately(n1LA_ETH*n3ETH,2);    
+      document.getElementById('resultado2_BidETH').innerHTML = roundAccurately(n2LB_ETH*n3ETH,2);
+          
+      document.getElementById('resultado2_AskBNB').innerHTML = roundAccurately(n1LA_BNB*n3BNB,2);     
+      document.getElementById('resultado2_BidBNB').innerHTML = roundAccurately(n2LB_BNB*n3BNB,2);
+     
+      document.getElementById('resultado_Minimo_Ask').innerHTML = Minimo_Ask;
+      document.getElementById('resultado_Minimo_Bid').innerHTML = Minimo_Bid;
+      document.getElementById('resultado_Maximo_Ask').innerHTML = Maximo_Ask;
+      document.getElementById('resultado_Maximo_Bid').innerHTML = Maximo_Bid;
+
+
+      if (Minimo_Ask == roundAccurately(n1LA_BTC*n3BTC*n1BTC,2)) {
+        document.getElementById('resultado_Minimo_Ask_Pair').innerText = texto+"BTC";
+      } else if (Minimo_Ask == roundAccurately(n1LA_ETH*n3ETH*n1BTC,2)){
+        document.getElementById('resultado_Minimo_Ask_Pair').innerText = texto+"ETH";       
+      }else if (Minimo_Ask == roundAccurately(n1LA_BNB*n3BNB*n1BTC,2)){
+        document.getElementById('resultado_Minimo_Ask_Pair').innerText = texto+"BNB";       
+      }else if (Minimo_Ask == roundAccurately(n1LA_USDT*n1BTC,2)){
+        document.getElementById('resultado_Minimo_Ask_Pair').innerText = texto+"USDT";       
+      }
+      
+      if (Minimo_Bid == roundAccurately(n2LB_BTC*n3BTC*n1BTC,2)) {
+        document.getElementById('resultado_Minimo_Bid_Pair').innerText = texto+"BTC";
+      } else if (Minimo_Bid == roundAccurately(n2LB_ETH*n3ETH*n1BTC,2)){
+        document.getElementById('resultado_Minimo_Bid_Pair').innerText = texto+"ETH";       
+      }else if (Minimo_Bid == roundAccurately(n2LB_BNB*n3BNB*n1BTC,2)){
+        document.getElementById('resultado_Minimo_Bid_Pair').innerText = texto+"BNB";       
+      }else if (Minimo_Bid == roundAccurately(n2LB_USDT*n1BTC,2)){
+        document.getElementById('resultado_Minimo_Bid_Pair').innerText = texto+"USDT";       
+      }
+
+      if (Maximo_Ask == roundAccurately(n1LA_BTC*n3BTC*n1BTC,2)) {
+        document.getElementById('resultado_Maximo_Ask_Pair').innerText = texto+"BTC";
+      } else if (Maximo_Ask == roundAccurately(n1LA_ETH*n3ETH*n1BTC,2)){
+        document.getElementById('resultado_Maximo_Ask_Pair').innerText = texto+"ETH";       
+      }else if (Maximo_Ask == roundAccurately(n1LA_BNB*n3BNB*n1BTC,2)){
+        document.getElementById('resultado_Maximo_Ask_Pair').innerText = texto+"BNB";       
+      }else if (Maximo_Ask == roundAccurately(n1LA_USDT*n1BTC,2)){
+        document.getElementById('resultado_Maximo_Ask_Pair').innerText = texto+"USDT";       
+      }
+
+      if (Maximo_Bid == roundAccurately(n2LB_BTC*n3BTC*n1BTC,2)) {
+        document.getElementById('resultado_Maximo_Bid_Pair').innerText = texto+"BTC";
+      } else if (Maximo_Bid == roundAccurately(n2LB_ETH*n3ETH*n1BTC,2)){
+        document.getElementById('resultado_Maximo_Bid_Pair').innerText = texto+"ETH";       
+      }else if (Maximo_Bid == roundAccurately(n2LB_BNB*n3BNB*n1BTC,2)){
+        document.getElementById('resultado_Maximo_Bid_Pair').innerText = texto+"BNB";       
+      }else if (Maximo_Bid == roundAccurately(n2LB_USDT*n1BTC,2)){
+        document.getElementById('resultado_Maximo_Bid_Pair').innerText = texto+"USDT";       
+      }
+
+      if (Minimo_Bid == roundAccurately(n2LB_BTC*n3BTC*n1BTC,2)) {
+        document.getElementById('form_Min_Bid').innerHTML = n2LB_BTC;
+      } else if (Minimo_Bid == roundAccurately(n2LB_ETH*n3ETH*n1BTC,2)){
+        document.getElementById('form_Min_Bid').innerHTML = n2LB_ETH;
+      }else if (Minimo_Bid == roundAccurately(n2LB_BNB*n3BNB*n1BTC,2)){
+        document.getElementById('form_Min_Bid').innerHTML = n2LB_BNB;       
+      }else if (Minimo_Bid == roundAccurately(n2LB_USDT*n1BTC,2)){
+        document.getElementById('form_Min_Bid').innerHTML = n2LB_USDT;       
+      }
+
+      if (Maximo_Ask == roundAccurately(n1LA_BTC*n3BTC*n1BTC,2)) {
+        document.getElementById('form_Max_Ask').innerHTML = n1LA_BTC;
+      } else if (Maximo_Ask == roundAccurately(n1LA_ETH*n3ETH*n1BTC,2)){
+        document.getElementById('form_Max_Ask').innerHTML = n1LA_ETH;      
+      }else if (Maximo_Ask == roundAccurately(n1LA_BNB*n3BNB*n1BTC,2)){
+        document.getElementById('form_Max_Ask').innerHTML = n1LA_BNB;       
+      }else if (Maximo_Ask == roundAccurately(n1LA_USDT*n1BTC,2)){
+        document.getElementById('form_Max_Ask').innerHTML = n1LA_USDT;       
+      }
+
+      var Min_Bid = document.getElementById('form_Min_Bid').textContent;
+      var Max_Ask = document.getElementById('form_Max_Ask').textContent;
+      var Min_Bid_Pair = document.getElementById('resultado_Minimo_Bid_Pair').textContent;
+      var Max_Ask_Pair = document.getElementById('resultado_Maximo_Ask_Pair').textContent;
+      var Diff_Ask_Buy = (document.getElementById('resultado_Maximo_Ask').textContent)-(document.getElementById('resultado_Minimo_Bid').textContent)
+     
+    // var Qty_Sell = $('#resultsBuy tr:first').find("td:nth-child(1)").html();
+    //document.getElementById('demonow2').innerHTML = document.getElementById("demonow").value;
+
+    var hour_buy = parseFloat($( "#last_hour_buy" ).html()); 
+    var hour_sell = parseFloat($( "#last_hour_sell" ).html()); 
+
+if (hour_buy > hour_sell) { 
+    document.getElementById('last_side').innerHTML = "BUY";
+}
+else
+{
+    document.getElementById('last_side').innerHTML = "SELL";
+}
+ 
+    var price_buy = parseFloat($( "#last_price_buy" ).html()); 
+    var qty_buy = parseFloat($( "#last_qty_buy" ).html()); 
+    var pair_buy = ($( "#pair_buyed" ).html()); 
+    var coin = JSON.parse('{{coin | tojson}}');   
+    var price_buy_USD = "" ; 
+
+
+    var BTC_price = parseFloat($( "#demoBTC" ).html());
+    var ETH_price = parseFloat($( "#demoETH" ).html());    
+    var BNB_price = parseFloat($( "#demoBNB" ).html()); 
+
+if (pair_buy == coin+"USDT") {
+    price_buy_USD = price_buy*1; 
+}
+else if (pair_buy == coin+"BNB") {
+    price_buy_USD = price_buy*BNB_price;
+}
+else if (pair_buy == coin+"BTC") {
+    price_buy_USD = price_buy*BTC_price;
+}
+else if (pair_buy == coin+"ETH") {
+    price_buy_USD = price_buy*ETH_price;
+}
+
+
+    var BNB_price_on = (price_buy_USD/BNB_price); 
+    var price_sell_BNB = (BNB_price_on*0.8/100)+BNB_price_on;
+    var BNB_buyed_USD = (BNB_price_on*qty_buy*BNB_price); 
+    var sell_BNB_USD = price_sell_BNB*qty_buy*BNB_price;
+    var sell_BNB_USD_now = n1LA_BNB*qty_buy*BNB_price;
+    
+   
+    var ETH_price_on = (price_buy_USD/ETH_price);
+    var price_sell_ETH = (ETH_price_on*0.8/100)+ETH_price_on;
+    var ETH_buyed_USD = (ETH_price_on*qty_buy*ETH_price); 
+    var sell_ETH_USD = price_sell_ETH*qty_buy*ETH_price;
+    var sell_ETH_USD_now = n1LA_ETH*qty_buy*ETH_price;
+
+   
+    var BTC_price_on = (price_buy_USD/BTC_price);
+    var price_sell_BTC = (BTC_price_on*0.8/100)+BTC_price_on;
+    var BTC_buyed_USD = (BTC_price_on*qty_buy*BTC_price); 
+    var sell_BTC_USD = price_sell_BTC*qty_buy*BTC_price;
+    var sell_BTC_USD_now = n1LA_BTC*qty_buy*BTC_price;
+
+    var USDT_price_on = (price_buy_USD);
+    var price_sell_USDT = (USDT_price_on*0.8/100)+USDT_price_on;
+    var USDT_buyed_USD = (USDT_price_on*qty_buy); 
+    var sell_USDT_USD = price_sell_USDT*qty_buy;
+    var sell_USDT_USD_now = n1LA_USDT*qty_buy;
+
+    document.getElementById('price_buy').innerHTML = price_buy_USD; 
+    document.getElementById('qty_buy').innerHTML = qty_buy; 
+
+    document.getElementById('BNB_buyed_USD').innerHTML = BNB_buyed_USD;
+    document.getElementById('BNB_price_on').innerHTML = BNB_price_on;
+    document.getElementById('price_sell_BNB').innerHTML = (price_sell_BNB); 
+    document.getElementById('sell_BNB_USD').innerHTML = (sell_BNB_USD); 
+    document.getElementById('sell_BNB_USD_now').innerHTML = (sell_BNB_USD_now); 
+
+    document.getElementById('ETH_buyed_USD').innerHTML = ETH_buyed_USD;
+    document.getElementById('ETH_price_on').innerHTML = ETH_price_on;
+    document.getElementById('price_sell_ETH').innerHTML = (price_sell_ETH);
+    document.getElementById('sell_ETH_USD').innerHTML = (sell_ETH_USD); 
+    document.getElementById('sell_ETH_USD_now').innerHTML = (sell_ETH_USD_now); 
+
+    document.getElementById('BTC_buyed_USD').innerHTML = BTC_buyed_USD;
+    document.getElementById('BTC_price_on').innerHTML = BTC_price_on;
+    document.getElementById('price_sell_BTC').innerHTML = (price_sell_BTC);
+    document.getElementById('sell_BTC_USD').innerHTML = (sell_BTC_USD); 
+    document.getElementById('sell_BTC_USD_now').innerHTML = (sell_BTC_USD_now); 
+    
+    document.getElementById('USDT_buyed_USD').innerHTML = USDT_buyed_USD;
+    document.getElementById('USDT_price_on').innerHTML = USDT_price_on;
+    document.getElementById('price_sell_USDT').innerHTML = (price_sell_USDT);
+    document.getElementById('sell_USDT_USD').innerHTML = (sell_USDT_USD); 
+    document.getElementById('sell_USDT_USD_now').innerHTML = (sell_USDT_USD_now); 
+    
+
+   
+    $('#quantitybuy').val(roundAccurately(n1BTC,x_count));
+    $('#buyprice').val(roundAccurately(Min_Bid,8));
+    $('#symbolbuy').val(Min_Bid_Pair);
+    $('#symbolsell').val(Max_Ask_Pair);
+    
+    $('#quantitysell').val(qty_buy);
+
+    var IsParity = (((Diff_Ask_Buy)*100)/50);
+    document.getElementById('IsParity').innerHTML = roundAccurately(IsParity,2); 
+     
+    // if (roundAccurately(Max_Ask,8)>roundAccurately(price_sell,8)) {
+    //     $('#sellprice').val(roundAccurately(Max_Ask,8));
+    // } else if (roundAccurately(price_sell,8)>roundAccurately(Max_Ask,8)) {
+    //     $('#sellprice').val(roundAccurately(price_sell,8));
+    // } else if (price_buy >= roundAccurately(Max_Ask,8)) {
+    //     $('#sellprice').val(roundAccurately(price_sell,8));
+    // }
+
+$('#my_orders tbody tr:last-child').each(function() {
+var order_exist = $(this).find("td:nth-child(2)").html();   
+
+if (typeof  order_exist == 'undefined') {
+    document.getElementById('order_exist').innerHTML = "Not Exist"; 
+    
+}
+else{  document.getElementById('order_exist').innerHTML = "Exist"; }
+
+});  
+
+var exist_order = ($( "#order_exist" ).text()); 
+var side_last = ($( "#last_side" ).text()); 
+var button_buy = document.getElementById('buy');
+
+if (roundAccurately(IsParity,2) > 0.4 && exist_order == "Not Exist") {    
+    document.getElementById("trade").innerHTML = "BUY BID"
+}
+
+
+if (side_last == "BUY" && exist_order == "Not Exist") {         
+
+    if (Max_Ask_Pair == coin+"BNB" && price_sell_BNB < Max_Ask) {
+        document.getElementById("trade").innerHTML = "SELL ASK" 
+        $('#sellprice').val(roundAccurately(Max_Ask,8));
+    }
+    else if (Max_Ask_Pair == coin+"ETH" && price_sell_ETH < Max_Ask) {
+        document.getElementById("trade").innerHTML = "SELL ASK" 
+        $('#sellprice').val(roundAccurately(Max_Ask,8));
+    }
+    else if (Max_Ask_Pair == coin+"BTC" && price_sell_BTC < Max_Ask) {
+        document.getElementById("trade").innerHTML = "SELL ASK" 
+        $('#sellprice').val(roundAccurately(Max_Ask,8));
+    }
+    else if (Max_Ask_Pair == coin+"USDT" && price_sell_USDT < Max_Ask) {
+        document.getElementById("trade").innerHTML = "SELL ASK" 
+        $('#sellprice').val(roundAccurately(Max_Ask,8));
+    }    
+    
+if (Max_Ask_Pair == coin+"BNB" && Max_Ask < BNB_price_on) {
+        document.getElementById("trade").innerHTML = "SELL ASK"
+        $('#sellprice').val(roundAccurately(ETH_price_on,8));
+    }
+    else if (Max_Ask_Pair == coin+"ETH" && Max_Ask < ETH_price_on) {        
+        document.getElementById("trade").innerHTML = "SELL ASK"
+        $('#sellprice').val(roundAccurately(ETH_price_on,8));
+    }
+    else if (Max_Ask_Pair == coin+"BTC" && Max_Ask < BTC_price_on) {        
+        document.getElementById("trade").innerHTML = "SELL ASK"
+        $('#sellprice').val(roundAccurately(ETH_price_on,8));
+    }
+   else if (Max_Ask_Pair == coin+"USDT" && Max_Ask < USDT_price_on) {        
+        document.getElementById("trade").innerHTML = "SELL ASK"
+        $('#sellprice').val(roundAccurately(ETH_price_on,8));
+    }
+
+}
+
+
+if (exist_order == "Exist") {         
+    if (roundAccurately(IsParity,2) > 0.5) {      
+        document.getElementById("trade").innerHTML = "CANCEL"  
+    }
+//     else if (Max_Ask_Pair == coin+"BNB" && Min_Bid > price_sell_BNB) {
+//         document.getElementById("trade").innerHTML = "CANCEL"
+//     }
+//     else if (Max_Ask_Pair == coin+"ETH" && Min_Bid > price_sell_ETH) {        
+//         document.getElementById("trade").innerHTML = "CANCEL"
+//     }
+//     else if (Max_Ask_Pair == coin+"BTC" && Min_Bid > price_sell_BTC) {        
+//         document.getElementById("trade").innerHTML = "CANCEL"
+//     }
+//    else if (Max_Ask_Pair == coin+"USDT" && Min_Bid > price_sell_USDT) {        
+//         document.getElementById("trade").innerHTML = "CANCEL"
+//     }
+
+}
+
+// else {
+//     document.getElementById("trade").innerHTML = ""
+    
+// }
+
+
+// function timeConverter(UNIX_timestamp){
+//     var a = new Date(UNIX_timestamp);
+//     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+//     var year = a.getFullYear();
+//     var month = months[a.getMonth()];
+//     var date = a.getDate();
+//     var hour = a.getHours();
+//     var min = a.getMinutes();
+//     var sec = a.getSeconds();
+//     var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+//     return time;
+//   }
+//   var x3 = new Date();
+//   document.getElementById("datenow").innerHTML = timeConverter(x3);
+
+    
+      }, 1000);
+    }
+
+</script>
+
+
+<script>
+    
+    setInterval(function(){ 
+
+// $( "#trade" ).change(function() {
+
+var trade = ($( "#trade" ).html()); 
+var button_buy = document.getElementById('buy');
+var button_sell = document.getElementById('sell');
+var button_cancel = document.getElementById('cancel');
+ 
+document.getElementById("trade2").innerHTML = trade;
+
+//});
+
+
+if (trade == "BUY BID") { 
+button_buy.click()}
+else if (trade == "SELL ASK") {
+button_sell.click()}
+else if (trade == "CANCEL") {
+button_cancel.click()}
+
+
+
+}, 10000);
+</script>
+
+
+  <script>
+
+    // document.getElementById("parityquantity").defaultValue = "11";
+      
+      var texto = $('#my_cryptocoin :selected').text();
+      var res = texto.toLowerCase();
+  
+      var binanceSocket = new WebSocket("wss://stream.binance.com:9443/ws/"+res+"btc@ticker");
+  
+     
+  
+       binanceSocket.onmessage = function (event) {
+         
+          // console.log(event.data);
+  
+           var messageObject = JSON.parse(event.data)   
+
+           var numero = $('#parityquantity').val(); 
+  
+            //document.getElementById("demoBNB").innerHTML = Math.round(messageObject.p) ;
+
+            const roundAccurately = (number, decimalPlaces) => Number(Math.round(number + "e" + decimalPlaces) + "e-" + decimalPlaces)
+            Number.prototype.countDecimals = function () {
+                if(Math.floor(this.valueOf()) === this.valueOf()) return 0;
+                return this.toString().split(".")[1].length || 0; 
+                    }
+
+            //document.getElementById("tst5").innerHTML = x.countDecimals();
+            var _bid_price = parseFloat(messageObject.b);
+            var _bid_price_count = _bid_price.countDecimals(); // 9
+
+            var _bid_vol = parseFloat(messageObject.B);
+            var _bid_vol_count = _bid_vol.countDecimals(); // 9
+
+            var _ask_vol = parseFloat(messageObject.A);
+            var _ask_vol_count = _ask_vol.countDecimals(); // 9
+
+            var _ask_price = parseFloat(messageObject.a);
+            var _ask_price_count = _ask_price.countDecimals(); // 9
+
+
+           document.getElementById("btc_bid_price").innerHTML = roundAccurately(messageObject.b,_bid_price_count);
+           document.getElementById("btc_bid_vol").innerHTML = roundAccurately(messageObject.B,_bid_vol_count);
+           document.getElementById("btc_ask_price").innerHTML = roundAccurately(messageObject.a,_ask_price_count);
+           document.getElementById("btc_ask_vol").innerHTML = roundAccurately(messageObject.A,_ask_vol_count);
+           document.getElementById("btc_price_change").innerHTML = roundAccurately(messageObject.p,8);
+           document.getElementById("btc_price_change_percent").innerHTML = roundAccurately(messageObject.P,2);
+           document.getElementById("demonowBTC").innerHTML = parseFloat(roundAccurately(messageObject.c, 8));
+
+       }
+
+  </script>
+    
+
+    <script>
+
+        // document.getElementById("parityquantity").defaultValue = "11";
+          
+          var texto = $('#my_cryptocoin :selected').text();
+          var res = texto.toLowerCase();
+      
+          var binanceSocket = new WebSocket("wss://stream.binance.com:9443/ws/"+res+"eth@ticker");
+      
+         
+      
+           binanceSocket.onmessage = function (event) {
+             
+             //  console.log(event.data);
+      
+               var messageObject = JSON.parse(event.data)   
+    
+               var numero = $('#parityquantity').val(); 
+      
+                //document.getElementById("demoBNB").innerHTML = Math.round(messageObject.p) ;
+    
+                const roundAccurately = (number, decimalPlaces) => Number(Math.round(number + "e" + decimalPlaces) + "e-" + decimalPlaces)
+                Number.prototype.countDecimals = function () {
+                    if(Math.floor(this.valueOf()) === this.valueOf()) return 0;
+                    return this.toString().split(".")[1].length || 0; 
+                        }
+    
+                //document.getElementById("tst5").innerHTML = x.countDecimals();
+                var _bid_price = parseFloat(messageObject.b);
+                var _bid_price_count = _bid_price.countDecimals(); // 9
+    
+                var _bid_vol = parseFloat(messageObject.B);
+                var _bid_vol_count = _bid_vol.countDecimals(); // 9
+    
+                var _ask_vol = parseFloat(messageObject.A);
+                var _ask_vol_count = _ask_vol.countDecimals(); // 9
+    
+                var _ask_price = parseFloat(messageObject.a);
+                var _ask_price_count = _ask_price.countDecimals(); // 9
+    
+    
+               document.getElementById("eth_bid_price").innerHTML = roundAccurately(messageObject.b,_bid_price_count);
+               document.getElementById("eth_bid_vol").innerHTML = roundAccurately(messageObject.B,_bid_vol_count);
+               document.getElementById("eth_ask_price").innerHTML = roundAccurately(messageObject.a,_ask_price_count);
+               document.getElementById("eth_ask_vol").innerHTML = roundAccurately(messageObject.A,_ask_vol_count);
+               document.getElementById("eth_price_change").innerHTML = roundAccurately(messageObject.p,8);
+               document.getElementById("eth_price_change_percent").innerHTML = roundAccurately(messageObject.P,2);
+               document.getElementById("demonowETH").innerHTML = parseFloat(roundAccurately(messageObject.c, 8));
+    
+           }
+    
+      </script>
+        
+
+
+        <script>
+
+            // document.getElementById("parityquantity").defaultValue = "11";
+              
+              var texto = $('#my_cryptocoin :selected').text();
+              var res = texto.toLowerCase();
+          
+              var binanceSocket = new WebSocket("wss://stream.binance.com:9443/ws/"+res+"bnb@ticker");
+          
+             
+          
+               binanceSocket.onmessage = function (event) {
+                 
+              //     console.log(event.data);
+          
+                   var messageObject = JSON.parse(event.data)   
+        
+                   var numero = $('#parityquantity').val(); 
+          
+                    //document.getElementById("demoBNB").innerHTML = Math.round(messageObject.p) ;
+        
+                    const roundAccurately = (number, decimalPlaces) => Number(Math.round(number + "e" + decimalPlaces) + "e-" + decimalPlaces)
+                    Number.prototype.countDecimals = function () {
+                        if(Math.floor(this.valueOf()) === this.valueOf()) return 0;
+                        return this.toString().split(".")[1].length || 0; 
+                            }
+        
+                    //document.getElementById("tst5").innerHTML = x.countDecimals();
+                    var _bid_price = parseFloat(messageObject.b);
+                    var _bid_price_count = _bid_price.countDecimals(); // 9
+        
+                    var _bid_vol = parseFloat(messageObject.B);
+                    var _bid_vol_count = _bid_vol.countDecimals(); // 9
+        
+                    var _ask_vol = parseFloat(messageObject.A);
+                    var _ask_vol_count = _ask_vol.countDecimals(); // 9
+        
+                    var _ask_price = parseFloat(messageObject.a);
+                    var _ask_price_count = _ask_price.countDecimals(); // 9
+        
+        
+                   document.getElementById("bnb_bid_price").innerHTML = roundAccurately(messageObject.b,_bid_price_count);
+                   document.getElementById("bnb_bid_vol").innerHTML = roundAccurately(messageObject.B,_bid_vol_count);
+                   document.getElementById("bnb_ask_price").innerHTML = roundAccurately(messageObject.a,_ask_price_count);
+                   document.getElementById("bnb_ask_vol").innerHTML = roundAccurately(messageObject.A,_ask_vol_count);
+                   document.getElementById("bnb_price_change").innerHTML = roundAccurately(messageObject.p,8);
+                   document.getElementById("bnb_price_change_percent").innerHTML = roundAccurately(messageObject.P,2);
+                   document.getElementById("demonowBNB").innerHTML = parseFloat(roundAccurately(messageObject.c, 8));
+        
+               }
+        
+          </script>
+  
+<script>
+
+    // document.getElementById("parityquantity").defaultValue = "11";
+      
+      var texto = $('#my_cryptocoin :selected').text();
+      var res = texto.toLowerCase();
+  
+      var binanceSocket = new WebSocket("wss://stream.binance.com:9443/ws/"+res+"usdt@ticker");
+  
+     
+  
+       binanceSocket.onmessage = function (event) {
+         
+        //   console.log(event.data);
+  
+           var messageObject = JSON.parse(event.data)   
+
+           var numero = $('#parityquantity').val(); 
+  
+            //document.getElementById("demoBNB").innerHTML = Math.round(messageObject.p) ;
+
+            const roundAccurately = (number, decimalPlaces) => Number(Math.round(number + "e" + decimalPlaces) + "e-" + decimalPlaces)
+            Number.prototype.countDecimals = function () {
+                if(Math.floor(this.valueOf()) === this.valueOf()) return 0;
+                return this.toString().split(".")[1].length || 0; 
+                    }
+
+            var x = parseFloat(document.getElementById('bnb_bid_vol').textContent);
+            var x_count = x.countDecimals(); // 9
+            //document.getElementById("tst5").innerHTML = x.countDecimals();
+            var _bid_vol = parseFloat(messageObject.B);
+            var _bid_vol_count = _bid_vol.countDecimals(); // 9
+            var _ask_vol = parseFloat(messageObject.A);
+            var _ask_vol_count = _ask_vol.countDecimals(); // 9
+
+
+
+
+           document.getElementById("usdt_bid_price").innerHTML = roundAccurately(messageObject.b,2);
+           document.getElementById("usdt_bid_vol").innerHTML = roundAccurately(messageObject.B,_bid_vol_count);
+           document.getElementById("usdt_ask_price").innerHTML = roundAccurately(messageObject.a,2);
+           document.getElementById("usdt_ask_vol").innerHTML = roundAccurately(messageObject.A,_ask_vol_count);
+           document.getElementById("usdt_price_change").innerHTML = roundAccurately(messageObject.p,2);
+           document.getElementById("usdt_price_change_percent").innerHTML = roundAccurately(messageObject.P,2);
+           document.getElementById("demonow").innerHTML = parseFloat(roundAccurately(numero/messageObject.c, x_count));
+       }
+
+
+       
+  </script>
+
+
+<script>
+
+    var binanceSocket = new WebSocket("wss://stream.binance.com:9443/ws/bnbusdt@ticker");
+
+
+     binanceSocket.onmessage = function (event) {
+       
+         //console.log(event.data);
+
+         var messageObject = JSON.parse(event.data)   
+
+
+         //document.getElementById("demoBNB").innerHTML = Math.round(messageObject.p) ;
+
+         const roundAccurately = (number, decimalPlaces) => Number(Math.round(number + "e" + decimalPlaces) + "e-" + decimalPlaces)
+
+        document.getElementById("demoBNB").innerHTML = parseFloat(roundAccurately(messageObject.c, 2));
+        document.getElementById("BNB_price_change").innerHTML = roundAccurately(messageObject.p,2);
+        document.getElementById("BNB_price_change_percent").innerHTML = roundAccurately(messageObject.P,2);
+     }
+</script>
+
+<script>
+   
+    var binanceSocket = new WebSocket("wss://stream.binance.com:9443/ws/btcusdt@ticker");
+
+
+     binanceSocket.onmessage = function (event) {
+       
+        // console.log(event.data);
+
+         var messageObject = JSON.parse(event.data)   
+
+
+        //document.getElementById("demoBTC").innerHTML = messageObject.p;
+         const roundAccurately = (number, decimalPlaces) => Number(Math.round(number + "e" + decimalPlaces) + "e-" + decimalPlaces)
+
+         document.getElementById("demoBTC").innerHTML = roundAccurately(messageObject.c, 2);
+         document.getElementById("BTC_price_change").innerHTML = roundAccurately(messageObject.p,2);
+        document.getElementById("BTC_price_change_percent").innerHTML = roundAccurately(messageObject.P,2);
+     }
+</script>
+
+<script>
+   
+    var binanceSocket = new WebSocket("wss://stream.binance.com:9443/ws/ethusdt@ticker");
+
+
+     binanceSocket.onmessage = function (event) {
+       
+        // console.log(event.data);
+
+         var messageObject = JSON.parse(event.data)   
+
+
+        //document.getElementById("demoETH").innerHTML = messageObject.p;
+         const roundAccurately = (number, decimalPlaces) => Number(Math.round(number + "e" + decimalPlaces) + "e-" + decimalPlaces)
+
+         document.getElementById("demoETH").innerHTML = roundAccurately(messageObject.c, 2);
+         document.getElementById("ETH_price_change").innerHTML = roundAccurately(messageObject.p,2);
+        document.getElementById("ETH_price_change_percent").innerHTML = roundAccurately(messageObject.P,2);
+         
+     }
+</script>
+
+    
+
+<script type = "text/javascript"  src="{{ url_for('static', filename='BTC/chart.js') }}"></script>
+
+<script type = "text/javascript"  src="{{ url_for('static', filename='USDT/chart_USDT.js') }}"></script>
+
+</body>
+
+<!-- 
+<script>
+    
+    setInterval(orderBook,1000);
+    
+    function orderBook(){
+        var ourRequest = new XMLHttpRequest();
+        ourRequest.open('GET','https://api.binance.com/api/v1/depth?symbol=' + document.getElementById("my_cryptocoin").value + 'USDT&limit=5',true);
+        ourRequest.onload = function(){
+            ourData = JSON.parse(ourRequest.responseText);
+            //console.log(ourData);
+            var xAsk=[],yAsk=[],xBid=[],yBid=[];
+         //   var gd = document.getElementById('chartContainer1');
+            //Collect Data for Asks
+            for(i=0;i<5;i++){
+                xAsk.push(parseFloat(ourData["asks"][i][1]));
+                yAsk.push((ourData["asks"][i][0]*1).toString() + '_');
+            }
+            
+            //Collect Data for Bids
+            for(i=4;i>=0;i--){
+                xBid.push(parseFloat(ourData["bids"][i][1]));
+                yBid.push((ourData["bids"][i][0]*1).toString() + '_');
+            }
+            
+            //Display Chart for Asks
+            var data1 = [{
+              type: 'bar',
+              x: xAsk,
+              y: yAsk,
+              marker: {
+                  color: 'rgb(160, 9, 9)',
+
+              },
+              orientation: 'h'
+            }];
+
+            var layout1 = {
+                title: "Asks" + "<br>" + document.getElementById("my_cryptocoin").value + 'USDT',
+                width: 250,
+                height: 400,
+            }
+            
+
+            Plotly.newPlot('chartContainer1', data1,layout1);
+            
+            //Display Chart for Bids
+            var data2 = [{
+              type: 'bar',
+              x: xBid,
+              y: yBid, 
+              marker: {
+                  color: 'rgb(3, 119, 73)'
+
+              },
+              orientation: 'h'
+            }];
+
+            
+            var layout2 = {
+                title: "Bids" + "<br>" + document.getElementById("my_cryptocoin").value + 'USDT',
+                width: 250,
+                height: 400,
+            }
+            
+            Plotly.newPlot('chartContainer2', data2, layout2);
+            
+        }
+        ourRequest.send();
+        
+    }
+</script>
+
+<script>
+
+    setInterval(orderBook,1000);
+    function orderBook(){
+        var ourRequest = new XMLHttpRequest();
+        ourRequest.open('GET','https://api.binance.com/api/v1/depth?symbol=' + document.getElementById("my_cryptocoin").value + 'BTC&limit=5',true);
+        ourRequest.onload = function(){
+            ourData = JSON.parse(ourRequest.responseText);
+            //console.log(ourData);
+            var xAsk=[],yAsk=[],xBid=[],yBid=[];
+         //   var gd = document.getElementById('chartContainer1');
+            //Collect Data for Asks
+            for(i=0;i<5;i++){
+                xAsk.push(parseFloat(ourData["asks"][i][1]));
+                yAsk.push((ourData["asks"][i][0]*1).toString() + '_');
+            }
+            
+            //Collect Data for Bids
+            for(i=4;i>=0;i--){
+                xBid.push(parseFloat(ourData["bids"][i][1]));
+                yBid.push((ourData["bids"][i][0]*1).toString() + '_');
+            }
+            
+            //Display Chart for Asks
+            var data3 = [{
+              type: 'bar',
+              x: xAsk,
+              y: yAsk,
+              marker: {
+                  color: 'rgb(160, 9, 9)',
+
+              },
+              orientation: 'h'
+            }];
+
+            var layout3 = {
+                title: "Asks" + "<br>" + document.getElementById("my_cryptocoin").value + 'BTC',
+                width: 250,
+                height: 400,
+            }
+            
+
+            Plotly.newPlot('chartContainer3', data3,layout3);
+            
+            //Display Chart for Bids
+            var data4 = [{
+              type: 'bar',
+              x: xBid,
+              y: yBid, 
+              marker: {
+                  color: 'rgb(3, 119, 73)'
+
+              },
+              orientation: 'h'
+            }];
+
+            
+            var layout4 = {
+                title: "Bids" + "<br>" + document.getElementById("my_cryptocoin").value + 'BTC',
+                width: 250,
+                height: 400,
+            }
+            
+            Plotly.newPlot('chartContainer4', data4, layout4);
+            
+        }
+        ourRequest.send();
+        
+    }
+</script>
+
+<script>
+
+    setInterval(orderBook,1000);
+    function orderBook(){
+        var ourRequest = new XMLHttpRequest();
+        ourRequest.open('GET','https://api.binance.com/api/v1/depth?symbol=' + document.getElementById("my_cryptocoin").value + 'BNB&limit=5',true);
+        ourRequest.onload = function(){
+            ourData = JSON.parse(ourRequest.responseText);
+            //console.log(ourData);
+            var xAsk=[],yAsk=[],xBid=[],yBid=[];
+         //   var gd = document.getElementById('chartContainer1');
+            //Collect Data for Asks
+            for(i=0;i<5;i++){
+                xAsk.push(parseFloat(ourData["asks"][i][1]));
+                yAsk.push((ourData["asks"][i][0]*1).toString() + '_');
+            }
+            
+            //Collect Data for Bids
+            for(i=4;i>=0;i--){
+                xBid.push(parseFloat(ourData["bids"][i][1]));
+                yBid.push((ourData["bids"][i][0]*1).toString() + '_');
+            }
+            
+            //Display Chart for Asks
+            var data5 = [{
+              type: 'bar',
+              x: xAsk,
+              y: yAsk,
+              marker: {
+                  color: 'rgb(160, 9, 9)',
+
+              },
+              orientation: 'h'
+            }];
+
+            var layout5 = {
+                title: "Asks" + "<br>" + document.getElementById("my_cryptocoin").value + 'BNB',
+                width: 250,
+                height: 400,
+            }
+            
+
+            Plotly.newPlot('chartContainer5', data5,layout5);
+            
+            //Display Chart for Bids
+            var data6 = [{
+              type: 'bar',
+              x: xBid,
+              y: yBid, 
+              marker: {
+                  color: 'rgb(3, 119, 73)'
+
+              },
+              orientation: 'h'
+            }];
+
+            
+            var layout6 = {
+                title: "Bids" + "<br>" + document.getElementById("my_cryptocoin").value + 'BNB',
+                width: 250,
+                height: 400,
+            }
+            
+            Plotly.newPlot('chartContainer6', data6, layout6);
+            
+        }
+        ourRequest.send();
+        
+    }
+</script>
+
+
+<script>
+
+    setInterval(orderBook,1000);
+    function orderBook(){
+        var ourRequest = new XMLHttpRequest();
+        ourRequest.open('GET','https://api.binance.com/api/v1/depth?symbol=' + document.getElementById("my_cryptocoin").value + 'ETH&limit=5',true);
+        ourRequest.onload = function(){
+            ourData = JSON.parse(ourRequest.responseText);
+            //console.log(ourData);
+            var xAsk=[],yAsk=[],xBid=[],yBid=[];
+         //   var gd = document.getElementById('chartContainer1');
+            //Collect Data for Asks
+            for(i=0;i<5;i++){
+                xAsk.push(parseFloat(ourData["asks"][i][1]));
+                yAsk.push((ourData["asks"][i][0]*1).toString() + '_');
+            }
+            
+            //Collect Data for Bids
+            for(i=4;i>=0;i--){
+                xBid.push(parseFloat(ourData["bids"][i][1]));
+                yBid.push((ourData["bids"][i][0]*1).toString() + '_');
+            }
+            
+            //Display Chart for Asks
+            var data7 = [{
+              type: 'bar',
+              x: xAsk,
+              y: yAsk,
+              marker: {
+                  color: 'rgb(160, 9, 9)',
+
+              },
+              orientation: 'h'
+            }];
+
+            var layout7 = {
+                title: "Asks" + "<br>" + document.getElementById("my_cryptocoin").value + 'ETH',
+                width: 250,
+                height: 400,
+            }
+            
+
+            Plotly.newPlot('chartContainer7', data7,layout7);
+            
+            //Display Chart for Bids
+            var data8 = [{
+              type: 'bar',
+              x: xBid,
+              y: yBid, 
+              marker: {
+                  color: 'rgb(3, 119, 73)'
+
+              },
+              orientation: 'h'
+            }];
+
+            
+            var layout8 = {
+                title: "Bids" + "<br>" + document.getElementById("my_cryptocoin").value + 'ETH',
+                width: 250,
+                height: 400,
+            }
+            
+            Plotly.newPlot('chartContainer8', data8, layout8);
+            
+        }
+        ourRequest.send();
+        
+    }
+</script>
+ -->
+
+
+
+</html>
